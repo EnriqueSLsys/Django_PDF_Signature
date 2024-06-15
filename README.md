@@ -56,7 +56,7 @@
    psql
    ALTER USER postgres PASSWORD 'usuario';
    CREATE DATABASE forms_medinaazahara;
-   GRANT ALL PRIVILEGES ON DATABASE forms_tangrambpm TO postgres;
+   GRANT ALL PRIVILEGES ON DATABASE forms_medinaazahara TO postgres;
    \q
    exit
 
@@ -77,7 +77,7 @@
    ```bash
    sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem
 
-   sudo nano /etc/nginx/sites-available/formularios_tangram.conf
+   sudo nano /etc/nginx/sites-available/forms_medinaazahara.conf
    # Añadir:
    server {
        listen 80;
@@ -110,7 +110,7 @@
 7. **Modificar Configuraciones en settings.py**:
 
    ```bash
-   sudo nano /var/www/html/PDjango/formularios_tangram/formularios_tangram/settings.py
+   sudo nano /var/www/html/PDjango/forms_medinaazahara/formularios_tangram/settings.py
    # Cambiar:
    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP']
    CSRF_TRUSTED_ORIGINS = ['https://TU_IP']
@@ -129,14 +129,14 @@
 8. **Migraciones de la Base de Datos**:
 
    ```bash
-   python3 /var/www/html/PDjango/formularios_tangram/manage.py makemigrations
-   python3 /var/www/html/PDjango/formularios_tangram/manage.py migrate
+   python3 /var/www/html/PDjango/forms_medinaazahara/manage.py makemigrations
+   python3 /var/www/html/PDjango/forms_medinaazahara/manage.py migrate
    ```
 
 9. **Iniciar uWSGI**:
 
    ```bash
-   uwsgi --ini /var/www/html/PDjango/formularios_tangram/uwsgi.ini --plugin python3
+   uwsgi --ini /var/www/html/PDjango/forms_medinaazahara/uwsgi.ini --plugin python3
    ```
 
 10. **Acceso a la Plataforma**:
