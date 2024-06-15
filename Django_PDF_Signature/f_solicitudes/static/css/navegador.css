@@ -1,0 +1,44 @@
+/* Estilos específicos para el navegador */
+.navbar {
+    margin-bottom: 20px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    font-size: 25px;
+    width: 250px; /* Reservar el espacio necesario para el texto completo */
+}
+
+.navbar-brand img {
+    margin-right: 10px;
+}
+
+.nav-item {
+    margin-right: 15px; /* Ajustar el margen derecho si es necesario */
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #529b16 !important;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: #4d7775;
+    color: #fff !important;
+}
+
+.navbar-nav {
+    margin-left: 10px; /* Ajustar para que los enlaces estén al lado del texto */
+    display: flex;
+    align-items: center;
+}
+
+#brandText {
+    white-space: nowrap; /* Evita que el texto del logotipo se divida en varias líneas */
+}

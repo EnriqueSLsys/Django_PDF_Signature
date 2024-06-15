@@ -1,0 +1,65 @@
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h1 class="text-center">Formulario de Solicitud</h1>
+                <p class="text-center">Completa el formulario para generar un PDF.</p>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control {% if form.nom.errors %} is-invalid {% endif %}" id="nombre" name="nom">
+                            <label for="nombre" class="form-label">Nombre*:</label>
+                            {% for error in form.nom.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control {% if form.ap1.errors %} is-invalid {% endif %}" id="apellido1" name="ap1">
+                            <label for="apellido1" class="form-label">Primer Apellido*:</label>
+                            {% for error in form.ap1.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="apellido2" name="ap2">
+                            <label for="apellido2" class="form-label">Segundo Apellido:</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control {% if form.dni.errors %} is-invalid {% endif %}" id="dni" name="dni">
+                            <label for="dni" class="form-label">DNI*:</label>
+                            {% for error in form.dni.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <textarea class="form-control {% if form.texto.errors %} is-invalid {% endif %}" id="texto" name="texto" rows="1" maxlength="512"></textarea>
+                            <label for="texto" class="form-label">Texto* (máximo 512 caracteres):</label>
+                            {% for error in form.texto.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button id="borrarForm" type="reset" class="btn btn-danger btn-lg btn-block w-100">Borrar</button>
+                        </div>
+                        <div class="col">
+                            <button id="confirmarForm" type="submit" class="btn btn-success btn-lg btn-block w-100">Enviar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
