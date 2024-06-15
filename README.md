@@ -55,7 +55,7 @@
    sudo -i -u postgres
    psql
    ALTER USER postgres PASSWORD 'usuario';
-   CREATE DATABASE forms_tangrambpm;
+   CREATE DATABASE forms_medinaazahara;
    GRANT ALL PRIVILEGES ON DATABASE forms_tangrambpm TO postgres;
    \q
    exit
