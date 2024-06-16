@@ -1,162 +1,219 @@
-# Django_PDF_Signature
+# Django PDF Signature
 
-## Descripción
+Este proyecto es una aplicación Django para la firma de PDFs. A continuación, encontrarás las instrucciones para la instalación manual y automatizada.
 
-**Django_PDF_Signature** es una plataforma web desarrollada con Django que permite la generación y firma digital de documentos PDF utilizando la herramienta Autofirma. Este proyecto está diseñado para proporcionar una solución eficiente y segura para individuos y empresas que necesitan gestionar documentos de manera digital, asegurando la autenticidad y confidencialidad de la información.
-
-## Características
-
-- **Generación de Documentos PDF**: Crea documentos PDF a partir de formularios web personalizados.
-- **Firma Digital**: Firma documentos PDF de manera segura utilizando Autofirma.
-- **Seguridad y Confidencialidad**: Incorpora medidas de seguridad robustas, incluyendo cifrado de datos, autenticación de usuarios y controles de acceso.
-- **Colaboración**: Facilita la revisión y firma de documentos por múltiples usuarios con funciones de seguimiento de cambios y comentarios.
-
-## Instalación
-
-### Requisitos Previos
+## Requisitos Previos
 
 - Python 3
 - PostgreSQL
 - Nginx
 - uWSGI
-- Autofirma 1.8 o superior
+- Git
 
-### Pasos de Instalación
+## Instalación Manual
 
-1. **Clonar el Repositorio desde GitHub**:
+### Paso 1: Instalación de Dependencias
 
-   ```bash
-   git clone https://github.com/EnriqueSLsys/Django_PDF_Signature.git
-   ```
+Actualiza el gestor de paquetes e instala las dependencias necesarias:
 
-2. **Crear el Directorio del Proyecto**:
+```sh
+sudo apt update
+sudo apt install -y git python3 python3-pip uwsgi uwsgi-plugin-python3 nginx postgresql postgresql-contrib libpq-dev unzip
+```
 
-   ```bash
-   sudo mkdir -p /var/www/html/PDjango
-   ```
+### Paso 2: Clonar el Repositorio
 
-3. **Mover el Repositorio Clonado**:
+Clona el repositorio desde GitHub:
 
-   ```bash
-   sudo mv Django_PDF_Signature/* /var/www/html/PDjango/
-   ```
+```sh
+git clone https://github.com/EnriqueSLsys/Django_PDF_Signature.git
+```
 
-4. **Instalar Dependencias**:
+Crea el directorio y mueve el contenido del repositorio:
 
-   ```bash
-   sudo apt update
-   sudo apt install python3 python3-pip uwsgi uwsgi-plugin-python3 nginx postgresql postgresql-contrib libpq-dev unzip
-   sudo pip3 install -r /var/www/html/PDjango/requirements.txt
-   ```
+```sh
+sudo mkdir -p /var/www/html/PDjango
+sudo mv Django_PDF_Signature /var/www/html/PDjango/
+```
 
-5. **Configurar PostgreSQL**:
+### Paso 3: Instalación de Requisitos de la Aplicación Django
 
-   ```bash
-   sudo -i -u postgres
-   psql
-   ALTER USER postgres PASSWORD 'usuario';
-   CREATE DATABASE forms_medinaazahara;
-   GRANT ALL PRIVILEGES ON DATABASE forms_medinaazahara TO postgres;
-   \q
-   exit
+Asegúrate de estar dentro del directorio de la aplicación Django:
 
-   sudo nano /etc/postgresql/14/main/postgresql.conf
-   # Añadir:
-   listen_addresses = 'TU_IP'
+```sh
+cd /var/www/html/PDjango/Django_PDF_Signature
+```
 
-   sudo nano /etc/postgresql/14/main/pg_hba.conf
-   # Añadir al final:
-   host all all TU_IP/24 md5
+Instala los requisitos de la aplicación:
 
-   sudo systemctl restart postgresql
-   ```
+```sh
+sudo pip3 install -r requirements.txt
+```
 
-6. **Configurar Nginx**:
-   Asegúrate de cambiar TU_IP por la IP de tu host.
+### Paso 4: Configuración de PostgreSQL
 
-   ```bash
-   sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem
+Cambia a la cuenta de usuario postgres y configura la base de datos:
 
-   sudo nano /etc/nginx/sites-available/forms_medinaazahara.conf
-   # Añadir:
-   server {
-       listen 80;
-       server_name TU_IP;
-       return 301 https://$host$request_uri;
-   }
-   server {
-       listen 443 ssl;
-       server_name TU_IP;
-       ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
-       ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
-       location / {
-           include uwsgi_params;
-           uwsgi_pass unix:/var/www/html/PDjango/formularios_tangram/formproject.sock;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-           proxy_set_header Referer $http_referer;
-       }
-       location /static/ {
-           alias /var/www/html/PDjango/formularios_tangram/f_solicitudes/static/;
-       }
-   }
+```sh
+sudo -i -u postgres
+psql -c "ALTER USER postgres PASSWORD 'usuario';"
+psql -c "CREATE DATABASE forms_medinaazahara;"
+psql -c "GRANT ALL PRIVILEGES ON DATABASE forms_medinaazahara TO postgres;"
+exit
+```
 
-   sudo ln -s /etc/nginx/sites-available/formularios_tangram.conf /etc/nginx/sites-enabled/
-   sudo systemctl restart nginx
-   ```
+Modifica el archivo `postgresql.conf`:
 
-7. **Modificar Configuraciones en settings.py**:
+```sh
+sudo nano /etc/postgresql/14/main/postgresql.conf
+```
 
-   ```bash
-   sudo nano /var/www/html/PDjango/forms_medinaazahara/formularios_tangram/settings.py
-   # Cambiar:
-   ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP']
-   CSRF_TRUSTED_ORIGINS = ['https://TU_IP']
-   DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.postgresql_psycopg2',
-           'NAME': 'forms_tangrambpm',
-           'USER': 'postgres',
-           'PASSWORD': 'tu_nueva_contraseña',
-           'HOST': 'TU_IP',
-           'PORT': '5432',
-       }
-   }
-   ```
+Añade la siguiente línea (reemplaza `TU_IP` con la IP de tu servidor):
 
-8. **Migraciones de la Base de Datos**:
+```plaintext
+listen_addresses = 'TU_IP'
+```
 
-   ```bash
-   python3 /var/www/html/PDjango/forms_medinaazahara/manage.py makemigrations
-   python3 /var/www/html/PDjango/forms_medinaazahara/manage.py migrate
-   ```
+Modifica el archivo `pg_hba.conf`:
 
-9. **Iniciar uWSGI**:
+```sh
+sudo nano /etc/postgresql/14/main/pg_hba.conf
+```
 
-   ```bash
-   uwsgi --ini /var/www/html/PDjango/forms_medinaazahara/uwsgi.ini --plugin python3
-   ```
+Añade la siguiente línea al final del archivo:
 
-10. **Acceso a la Plataforma**:
+```plaintext
+host all all TU_IP/24 md5
+```
 
-    Abre un navegador web y accede a `https://TU_IP`. Deberías ver la pantalla de inicio.
+Reinicia PostgreSQL:
 
-## Contribución
+```sh
+sudo systemctl restart postgresql
+```
 
-Si deseas contribuir a este proyecto, por favor, sigue los pasos a continuación:
+### Paso 5: Configuración de Nginx
 
-1. Haz un fork del repositorio.
-2. Crea una nueva rama (`git checkout -b feature/nueva-funcionalidad`).
-3. Realiza tus cambios y haz commit (`git commit -am 'Añadir nueva funcionalidad'`).
-4. Sube los cambios a tu rama (`git push origin feature/nueva-funcionalidad`).
-5. Abre un Pull Request.
+Genera un certificado SSL autofirmado:
 
-## Licencia
+```sh
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem
+```
 
-Este proyecto está bajo la licencia [Creative Commons BY-NC-ND 4.0 España](https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode).
+Crea un archivo de configuración para tu sitio web en Nginx:
 
-## Contacto
+```sh
+sudo nano /etc/nginx/sites-available/forms_medinaazahara.conf
+```
 
-Para cualquier consulta o sugerencia, por favor contacta a Enrique Serrano Lendines en [enrique.serrano.sys@gmail.com](mailto:enrique.serrano.sys@gmail.com).
+Añade el siguiente contenido (reemplaza `TU_IP` con la IP de tu servidor):
+
+```plaintext
+server {
+    listen 80;
+    server_name TU_IP;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name TU_IP;
+
+    ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+    ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/var/www/html/PDjango/Django_PDF_Signature/formproject.sock;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $
+
+remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Referer $http_referer;
+    }
+
+    location /static/ {
+        alias /var/www/html/PDjango/Django_PDF_Signature/f_solicitudes/static/;
+    }
+}
+```
+
+Activa el sitio en Nginx y reinicia:
+
+```sh
+sudo ln -s /etc/nginx/sites-available/forms_medinaazahara.conf /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+```
+
+### Paso 6: Modificación de Configuraciones en settings.py
+
+Modifica el archivo `settings.py` para adaptarlo a tu IP/Dominio:
+
+```sh
+sudo nano /var/www/html/PDjango/Django_PDF_Signature/Django_PDF_Signature/settings.py
+```
+
+Cambia las siguientes líneas:
+
+```python
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP']
+CSRF_TRUSTED_ORIGINS = ['https://TU_IP']
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'forms_medinaazahara',
+        'USER': 'postgres',
+        'PASSWORD': 'tu_nueva_contraseña',
+        'HOST': 'TU_IP',
+        'PORT': '5432',
+    }
+}
+```
+
+### Paso 7: Migraciones de la BD del Proyecto
+
+Realiza las migraciones de la base de datos:
+
+```sh
+python3 /var/www/html/PDjango/Django_PDF_Signature/manage.py makemigrations
+python3 /var/www/html/PDjango/Django_PDF_Signature/manage.py migrate
+```
+
+### Paso 8: Iniciar uWSGI
+
+Inicia uWSGI:
+
+```sh
+sudo uwsgi --ini /var/www/html/PDjango/Django_PDF_Signature/uwsgi.ini --plugin python3
+```
+
+## Instalación Automatizada
+
+Para una instalación automática, sigue estos pasos:
+
+1. Clona el repositorio desde GitHub:
+
+```sh
+git clone https://github.com/EnriqueSLsys/Django_PDF_Signature.git
+```
+
+2. Cambia al directorio del repositorio:
+
+```sh
+cd Django_PDF_Signature
+```
+
+3. Da permisos de ejecución al script de instalación:
+
+```sh
+chmod +x install.sh
+```
+
+4. Ejecuta el script de instalación:
+
+```sh
+sudo ./install.sh
+```
