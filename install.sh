@@ -1,8 +1,27 @@
 #!/bin/bash
 
 echo "Actualizando el gestor de paquetes e instalando dependencias..."
-sudo apt update
+sudo apt update --fix-missing
 sudo apt install -y git python3 python3-pip uwsgi uwsgi-plugin-python3 nginx postgresql postgresql-contrib libpq-dev unzip
+
+# Verificar la instalación de los paquetes esenciales
+if ! command -v pip3 &> /dev/null
+then
+    echo "pip3 no se pudo instalar. Por favor, verifica los repositorios."
+    exit 1
+fi
+
+if ! command -v uwsgi &> /dev/null
+then
+    echo "uwsgi no se pudo instalar. Por favor, verifica los repositorios."
+    exit 1
+fi
+
+if ! command -v psql &> /dev/null
+then
+    echo "PostgreSQL no se pudo instalar. Por favor, verifica los repositorios."
+    exit 1
+fi
 
 # Clonar el repositorio
 REPO_DIR="/var/www/html/PDjango/Django_PDF_Signature"
@@ -32,9 +51,9 @@ else
 fi
 
 echo "Configurando PostgreSQL..."
-sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'usuario';"
-sudo -u postgres psql -c "CREATE DATABASE forms_medinaazahara;"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE forms_medinaazahara TO postgres;"
+sudo -i -u postgres psql -c "ALTER USER postgres PASSWORD 'usuario';"
+sudo -i -u postgres psql -c "CREATE DATABASE forms_medinaazahara;"
+sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE forms_medinaazahara TO postgres;"
 
 echo "Modificando postgresql.conf..."
 sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/14/main/postgresql.conf
