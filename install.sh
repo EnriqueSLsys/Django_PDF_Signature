@@ -11,16 +11,24 @@ if ! command -v pip3 &> /dev/null; then
     exit 1
 fi
 
-# Paso 2: Descarga del repositorio y movimiento a la ruta específica
+# Paso 2: Descargar el repositorio y moverlo a la ruta específica
 echo "Clonando el repositorio y moviéndolo a la ruta específica..."
-git clone https://github.com/EnriqueSLsys/Django_PDF_Signature.git
-sudo mkdir -p /var/www/html/PDjango
-sudo mv Django_PDF_Signature /var/www/html/PDjango/
+REPO_DIR="/var/www/html/PDjango/Django_PDF_Signature"
+if [ -d "$REPO_DIR" ]; then
+    echo "El directorio $REPO_DIR ya existe. Borrando el contenido existente..."
+    sudo rm -rf "$REPO_DIR"
+fi
+git clone https://github.com/EnriqueSLsys/Django_PDF_Signature.git /var/www/html/PDjango/Django_PDF_Signature
 
 # Paso 3: Instalación de requisitos de la aplicación Django
 echo "Instalando requisitos de la aplicación Django..."
 cd /var/www/html/PDjango/Django_PDF_Signature
-sudo pip3 install -r requirements.txt
+if [ -f "requirements.txt" ]; then
+    sudo pip3 install -r requirements.txt
+else
+    echo "Error: No se encontró el archivo requirements.txt."
+    exit 1
+fi
 
 # Paso 4: Configuración de PostgreSQL
 echo "Configurando PostgreSQL..."
@@ -88,18 +96,33 @@ sudo systemctl restart nginx
 # Paso 6: Modificación de configuraciones en settings.py
 echo "Modificando configuraciones en settings.py..."
 SETTINGS_PY="/var/www/html/PDjango/Django_PDF_Signature/Django_PDF_Signature/settings.py"
-sudo sed -i "s/ALLOWED_HOSTS = .*/ALLOWED_HOSTS = ['localhost', '127.0.0.1', '$IP']/g" $SETTINGS_PY
-sudo sed -i "s/CSRF_TRUSTED_ORIGINS = .*/CSRF_TRUSTED_ORIGINS = ['https:\/\/$IP']/g" $SETTINGS_PY
-sudo sed -i "s/'HOST': .*/'HOST': '$IP',/g" $SETTINGS_PY
-sudo sed -i "s/'PASSWORD': .*/'PASSWORD': 'usuario',/g" $SETTINGS_PY
+if [ -f "$SETTINGS_PY" ]; then
+    sudo sed -i "s/ALLOWED_HOSTS = .*/ALLOWED_HOSTS = ['localhost', '127.0.0.1', '$IP']/g" $SETTINGS_PY
+    sudo sed -i "s/CSRF_TRUSTED_ORIGINS = .*/CSRF_TRUSTED_ORIGINS = ['https:\/\/$IP']/g" $SETTINGS_PY
+    sudo sed -i "s/'HOST': .*/'HOST': '$IP',/g" $SETTINGS_PY
+    sudo sed -i "s/'PASSWORD': .*/'PASSWORD': 'usuario',/g" $SETTINGS_PY
+else
+    echo "Error: No se encontró el archivo settings.py."
+    exit 1
+fi
 
 # Paso 7: Migraciones de la BD del proyecto
 echo "Realizando migraciones de la base de datos..."
-python3 /var/www/html/PDjango/Django_PDF_Signature/manage.py makemigrations
-python3 /var/www/html/PDjango/Django_PDF_Signature/manage.py migrate
+if [ -f "manage.py" ]; then
+    python3 manage.py makemigrations
+    python3 manage.py migrate
+else
+    echo "Error: No se encontró el archivo manage.py."
+    exit 1
+fi
 
 # Paso 8: Iniciar uWSGI
 echo "Iniciando uWSGI..."
-sudo uwsgi --ini /var/www/html/PDjango/Django_PDF_Signature/uwsgi.ini --plugin python3
+if [ -f "uwsgi.ini" ]; then
+    sudo uwsgi --ini uwsgi.ini --plugin python3
+else
+    echo "Error: No se encontró el archivo uwsgi.ini."
+    exit 1
+fi
 
 echo "El script ha finalizado. Accede a https://$IP para comprobar el funcionamiento."
