@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+    <h1 class="text-primary text-center mb-4">Bienvenido a Forms-IES Medina Azahara</h1>
+    <h2 class="text-center mb-4">Lista de Solicitudes</h2>
+    <div class="row">
+        {% for solicitud in solicitudes %}
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card mb-4 shadow-lg">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ solicitud.nombre }} {{ solicitud.primer_apellido }} {{ solicitud.segundo_apellido }}</h5>
+                        <p class="card-text"><strong>DNI:</strong> {{ solicitud.dni }}</p>
+                        <p class="card-text"><strong>Fecha de Creación:</strong> {{ solicitud.fecha_creacion }}</p>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'descargar_pdf' solicitud.id %}" class="btn btn-primary btn-sm me-2" download>
+                                    <i class="fas fa-file-pdf me-2"></i> Descargar PDF
+                                </a>
+                                {% if solicitud.is_signed %}
+                                    <a href="{% url 'descargar_pdf_firmado' solicitud.id %}" class="btn btn-info btn-sm me-2" download>
+                                        <i class="fas fa-file-signature me-2"></i> Descargar PDF Firmado
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'generar_pdf' solicitud.id %}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-file-alt me-2"></i> Generar PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <script src="{% static 'js/animaciones.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row justify-content-center my-5">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-secondary text-white text-center">
+                    <h1 class="card-title mb-0">Confirmación</h1>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">¡Tu solicitud ha sido enviada con éxito!</p>
+                    <h2 class="card-title">Detalles de la Solicitud:</h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Nombre:</strong> {{ solicitud.nom }}</li>
+                        <li class="list-group-item"><strong>Apellidos:</strong> {{ solicitud.ap1 }} {% if solicitud.ap2 %} {{ solicitud.ap2 }} {% endif %}</li>
+                        <li class="list-group-item"><strong>DNI:</strong> {{ solicitud.dni }}</li>
+                        <li class="list-group-item"><strong>Texto:</strong> {{ solicitud.texto }}</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <a href="{% url 'solicitudes' %}" class="btn btn-danger btn-lg w-100">Volver al Formulario</a>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <a href="{% url 'generar_pdf' solicitud.id %}" class="btn btn-success btn-lg w-100">Generar PDF</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

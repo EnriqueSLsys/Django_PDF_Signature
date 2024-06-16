@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Formularios IES Medina Azahara{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navegador.css' %}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Google Fonts para tipografía personalizada -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&display=swap">
+    <!--Imagenes SVG fontawesome-->
+    <script src="https://kit.fontawesome.com/ed08637bf3.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <style type="text/css">
+        .navbar-brand {
+            font-family: 'Merriweather', serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            margin-left: 10px;
+            font-size: 28px;
+            min-width: 333px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navegacion/nav.html' %}
+
+    <main class="container">
+        {% block content %}
+            
+        {% endblock %}
+    </main>
+
+    <footer class="container">
+        <p>&copy; 2024 Formularios-IES Medina Azahara (Enrique Serrano)</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'js/dinamicForm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/animaciones.js' %}"></script>
+</body>
+</html>

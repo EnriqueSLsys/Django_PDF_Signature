@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitudes{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/formularios.css' %}">
+    {% include 'form.html' %}
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function(){
+            $(".form-floating input, .form-floating textarea").on("input", function(){
+                if($(this).val() !== ""){
+                    $(this).siblings("label").addClass("active");
+                } else {
+                    $(this).siblings("label").removeClass("active");
+                }
+            });
+        });
+    </script>
+    <script src="{% static 'js/animaciones.js' %}"></script>
+
+{% endblock %}
