@@ -4,6 +4,7 @@ Este proyecto es una aplicación Django para la firma de PDFs. A continuación, 
 
 ## Requisitos Previos
 
+- Ubuntu 22.04
 - Python 3
 - PostgreSQL
 - Nginx
