@@ -106,6 +106,7 @@ if [ -f "$SETTINGS_FILE" ]; then
     sudo sed -i "s/CSRF_TRUSTED_ORIGINS = \[\]/CSRF_TRUSTED_ORIGINS = ['https:\/\/192.168.1.18']/g" "$SETTINGS_FILE"
     sudo sed -i "s/'HOST': 'localhost'/'HOST': '192.168.1.18'/g" "$SETTINGS_FILE"
     sudo sed -i "s/'PASSWORD': ''/'PASSWORD': 'usuario'/g" "$SETTINGS_FILE"
+    sudo sed -i "s/'HOST': 'TU_IP'/'HOST': 'localhost'/g" "$SETTINGS_FILE"
 else
     echo "Error: No se encontró el archivo settings.py."
     exit 1
