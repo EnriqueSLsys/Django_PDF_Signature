@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Obtener la IP del servidor automáticamente
+SERVER_IP=$(hostname -I | awk '{print $1}')
+DB_PASSWORD="usuario"
+
 echo "Actualizando el gestor de paquetes e instalando dependencias..."
 sudo apt update --fix-missing
 sudo apt install -y git python3 python3-pip uwsgi uwsgi-plugin-python3 nginx postgresql postgresql-contrib libpq-dev unzip
@@ -51,7 +55,7 @@ else
 fi
 
 echo "Configurando PostgreSQL..."
-sudo -i -u postgres psql -c "ALTER USER postgres PASSWORD 'usuario';"
+sudo -i -u postgres psql -c "ALTER USER postgres PASSWORD '$DB_PASSWORD';"
 sudo -i -u postgres psql -c "CREATE DATABASE forms_medinaazahara;"
 sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE forms_medinaazahara TO postgres;"
 
@@ -59,22 +63,22 @@ echo "Modificando postgresql.conf..."
 sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/14/main/postgresql.conf
 
 echo "Modificando pg_hba.conf..."
-echo "host all all 192.168.1.18/24 md5" | sudo tee -a /etc/postgresql/14/main/pg_hba.conf
+echo "host all all $SERVER_IP/24 md5" | sudo tee -a /etc/postgresql/14/main/pg_hba.conf
 
 echo "Reiniciando PostgreSQL..."
 sudo systemctl restart postgresql
 
 echo "Configurando Nginx..."
-sudo bash -c 'cat > /etc/nginx/sites-available/forms_medinaazahara.conf <<EOL
+sudo bash -c "cat > /etc/nginx/sites-available/forms_medinaazahara.conf <<EOL
 server {
     listen 80;
-    server_name 192.168.1.18;
+    server_name $SERVER_IP;
     return 301 https://\$host\$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name 192.168.1.18;
+    server_name $SERVER_IP;
 
     ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
     ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
@@ -93,7 +97,7 @@ server {
         alias /var/www/html/PDjango/Django_PDF_Signature/f_solicitudes/static/;
     }
 }
-EOL'
+EOL"
 
 echo "Activando el sitio en Nginx y reiniciando..."
 sudo ln -s /etc/nginx/sites-available/forms_medinaazahara.conf /etc/nginx/sites-enabled/
@@ -102,11 +106,10 @@ sudo systemctl restart nginx
 echo "Modificando configuraciones en settings.py..."
 SETTINGS_FILE="$REPO_DIR/Django_PDF_Signature/settings.py"
 if [ -f "$SETTINGS_FILE" ]; then
-    sudo sed -i "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.18']/g" "$SETTINGS_FILE"
-    sudo sed -i "s/CSRF_TRUSTED_ORIGINS = \[\]/CSRF_TRUSTED_ORIGINS = ['https:\/\/192.168.1.18']/g" "$SETTINGS_FILE"
-    sudo sed -i "s/'HOST': 'localhost'/'HOST': '192.168.1.18'/g" "$SETTINGS_FILE"
-    sudo sed -i "s/'PASSWORD': ''/'PASSWORD': 'usuario'/g" "$SETTINGS_FILE"
-    sudo sed -i "s/'HOST': 'TU_IP'/'HOST': 'localhost'/g" "$SETTINGS_FILE"
+    sudo sed -i "s/ALLOWED_HOSTS = \[\]/ALLOWED_HOSTS = ['localhost', '127.0.0.1', '$SERVER_IP']/g" "$SETTINGS_FILE"
+    sudo sed -i "s/CSRF_TRUSTED_ORIGINS = \[\]/CSRF_TRUSTED_ORIGINS = ['https:\/\/$SERVER_IP']/g" "$SETTINGS_FILE"
+    sudo sed -i "s/'HOST': 'localhost'/'HOST': '$SERVER_IP'/g" "$SETTINGS_FILE"
+    sudo sed -i "s/'PASSWORD': ''/'PASSWORD': '$DB_PASSWORD'/g" "$SETTINGS_FILE"
 else
     echo "Error: No se encontró el archivo settings.py."
     exit 1
@@ -124,4 +127,4 @@ fi
 echo "Iniciando uWSGI..."
 sudo uwsgi --ini "$REPO_DIR/uwsgi.ini" --plugin python3
 
-echo "El script ha finalizado. Accede a https://192.168.1.18 para comprobar el funcionamiento."
+echo "El script ha finalizado. Accede a https://$SERVER_IP para comprobar el funcionamiento."
