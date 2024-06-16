@@ -25,13 +25,13 @@ SECRET_KEY = 'django-insecure-ytocni#t)mh^+vl$8p0#)7^*!^v!2*tcp8dqg+%1(ku-5$*yy#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.18']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'TU_IP']
 
 # Configuraciones necesarias para que CSRF funcione correctamente con HTTPS en Nginx.
 # CSRF_COOKIE_SECURE garantiza que las cookies CSRF se utilicen de manera segura.
 # CSRF_TRUSTED_ORIGINS especifica los orígenes de confianza para CSRF, asegurando la autenticación adecuada.
 CSRF_COOKIE_SECURE = False
-CSRF_TRUSTED_ORIGINS = ['https://192.168.1.18']
+CSRF_TRUSTED_ORIGINS = ['https://TU_IP']
 
 # Application definition
 
@@ -95,8 +95,8 @@ DATABASES = {
         'NAME': 'forms_medinaazahara',
         'USER': 'postgres',
         'PASSWORD': 'usuario',
-        'HOST': '192.168.1.18',
-        'DATABASE_PORT': '5432',    
+        'HOST': 'TU_IP',
+        'PORT': '5432',    
         }
 }
 
